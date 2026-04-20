@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Roots - Digital Signage</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <video id="bg-video" autoplay muted playsinline>
+            <source src="assets/videos/template_blank_tiers.mp4" type="video/mp4">
+        </video>
+
+        <div id="overlay" class="overlay">
+            <!-- Tiers will be injected here -->
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        const overlay = document.getElementById('overlay');
+        const video = document.getElementById('bg-video');
+
+        function renderProducts() {
+            overlay.innerHTML = productData.map(tier => `
+                <div class="tier">
+                    <div class="tier-header">
+                        <img src="assets/logos/PNG/Beige/_QR_Horizontal_Beige.png" alt="Quality Roots" class="logo">
+                        <h2 class="tier-title">${tier.category}</h2>
+                    </div>
+                    <div class="product-grid">
+                        ${tier.products.map(product => `
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="${product.image}" alt="${product.name}">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-name">${product.name}</h3>
+                                    <div class="product-meta">
+                                        <span>${product.type}</span>
+                                    </div>
+                                    <div class="product-price-row">
+                                        <span class="product-thc">${product.thc}</span>
+                                        <span class="product-price">${product.price}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderProducts();
+
+        // Show overlay when video reaches the static frame part
+        // Based on the frames analyzed, the transition ends around 1-2 seconds.
+        // We'll watch the video time or just show it after a delay if the video loops.
+
+        video.addEventListener('timeupdate', () => {
+            // Adjust this time based on the actual video transition
+            if (video.currentTime > 0.5) {
+                overlay.classList.add('visible');
+            } else {
+                overlay.classList.remove('visible');
+            }
+        });
+
+        video.addEventListener('ended', () => {
+            video.currentTime = 0;
+            video.play();
+        });
+    </script>
+</body>
+</html>
